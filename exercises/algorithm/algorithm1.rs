@@ -2,7 +2,6 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -29,13 +28,13 @@ struct LinkedList<T> {
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T: PartialOrd + Clone> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T> LinkedList<T> {
+impl<T: PartialOrd + Clone> LinkedList<T> {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -69,14 +68,61 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+	pub fn merge(mut list_a: LinkedList<T>, mut list_b: LinkedList<T>) -> Self
 	{
 		//TODO
-		Self {
+		let mut merged = Self {
             length: 0,
             start: None,
             end: None,
+        };
+
+        let mut ia = 0;
+        let mut ib = 0;
+        loop {
+            let elema = list_a.get(ia);
+            let elemb = list_b.get(ib);
+
+            if let None = elema {
+                break;
+            }
+            let elema = elema.unwrap();
+
+            if let None = elemb {
+                break;
+            }
+            let elemb = elemb.unwrap();
+
+            if elema < elemb {
+                merged.add(elema.clone());
+                ia += 1;
+            } else {
+                merged.add(elemb.clone());
+                ib += 1;
+            }
         }
+
+        loop {
+            let elem = list_a.get(ia);
+            if let None = elem {
+                break;
+            }
+            let elem = elem.unwrap();
+            merged.add(elem.clone());
+            ia += 1;
+        }
+
+        loop {
+            let elem = list_b.get(ib);
+            if let None = elem {
+                break;
+            }
+            let elem = elem.unwrap();
+            merged.add(elem.clone());
+            ib += 1;
+        }
+
+        merged
 	}
 }
 
